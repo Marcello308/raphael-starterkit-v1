@@ -26,27 +26,27 @@
   --ring: 262.1 88.3% 57.8%;
   --radius: 0.5rem;
 }
-.dark  {
-  --background: 262.1 50% 10%;
-  --foreground: 262.1 5% 100%;
-  --card: 262.1 50% 10%;
-  --card-foreground: 262.1 5% 100%;
-  --popover: 262.1 50% 5%;
-  --popover-foreground: 262.1 5% 100%;
-  --primary: 262.1 88.3% 57.8%;
+.dark {
+  --background: 240 15% 6%;
+  --foreground: 0 0% 100%;
+  --card: 240 20% 10%;
+  --card-foreground: 0 0% 100%;
+  --popover: 240 20% 8%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 220 90% 60%; /* 蓝色主色，科技感强 */
   --primary-foreground: 0 0% 100%;
-  --secondary: 262.1 30% 20%;
+  --secondary: 240 15% 20%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 224.10000000000002 30% 25%;
-  --muted-foreground: 262.1 5% 65%;
-  --accent: 224.10000000000002 30% 25%;
-  --accent-foreground: 262.1 5% 95%;
+  --muted: 240 10% 30%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 220 70% 55%; /* 同样偏蓝但略微不同用于强调 */
+  --accent-foreground: 0 0% 100%;
   --destructive: 0 100% 50%;
-  --destructive-foreground: 262.1 5% 100%;
-  --border: 262.1 30% 50%;
-  --input: 262.1 30% 50%;
-  --ring: 262.1 88.3% 57.8%;
-  --radius: 0.5rem;
+  --destructive-foreground: 0 0% 100%;
+  --border: 240 10% 25%;
+  --input: 240 10% 30%;
+  --ring: 220 90% 60%;
+  --radius: 0.75rem;
 }
 
 }
