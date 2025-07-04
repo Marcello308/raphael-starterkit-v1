@@ -1,9 +1,8 @@
-import Header from "@/components/header";
-import { Footer } from "@/components/footer";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { createClient } from "@/utils/supabase/server";
 import { Toaster } from "@/components/ui/toaster";
+import { ConditionalLayout } from "@/components/conditional-layout";
 import "./globals.css";
 
 const baseUrl = process.env.BASE_URL
@@ -40,11 +39,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative min-h-screen">
-            <Header user={user} />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <ConditionalLayout user={user}>
+            {children}
+          </ConditionalLayout>
           <Toaster />
         </ThemeProvider>
       </body>

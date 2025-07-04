@@ -19,7 +19,7 @@ interface NavItem {
 
 export default function Header({ user }: HeaderProps) {
   const pathname = usePathname();
-  const isDashboard = pathname?.startsWith("/dashboard");
+  const isDashboard = pathname?.startsWith("/admin");
 
   // Main navigation items that are always shown
   const mainNavItems: NavItem[] = [
@@ -64,7 +64,7 @@ export default function Header({ user }: HeaderProps) {
               )}
               {!isDashboard && (
                 <Button asChild size="sm" variant="default">
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/admin">Admin</Link>
                 </Button>
               )}
               <form action={signOutAction}>

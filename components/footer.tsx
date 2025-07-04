@@ -40,7 +40,7 @@ const footerLinks = [
 
 export function Footer() {
   const pathname = usePathname();
-  const isDashboard = pathname?.startsWith("/dashboard");
+  const isDashboard = pathname?.startsWith("/admin");
 
   if (isDashboard) {
     return (
