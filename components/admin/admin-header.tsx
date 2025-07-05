@@ -8,26 +8,31 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@supabase/supabase-js";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { signOutToHomeAction } from "@/app/actions";
 
 interface AdminHeaderProps {
   user: User;
 }
 
 export function AdminHeader({ user }: AdminHeaderProps) {
-  const handleLogout = async () => {
-    // 实现登出逻辑
-    window.location.href = "/sign-in";
-  };
+  // 获取用户头像和昵称
+  const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+  const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0];
+  const userEmail = user.email;
 
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <header className="bg-admin-header-background border-b border-border shadow-sm">
       <div className="flex items-center justify-end px-6 py-4">
         {/* Right Side Actions */}
         <div className="flex items-center space-x-4">
+          {/* Theme Switcher */}
+          <ThemeSwitcher />
+
           {/* Notifications */}
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="hover:bg-secondary hover:text-accent">
             <Bell className="h-4 w-4" />
           </Button>
 
@@ -36,8 +41,11 @@ export function AdminHeader({ user }: AdminHeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
+                  {avatarUrl && (
+                    <AvatarImage src={avatarUrl} alt={userName || "User avatar"} />
+                  )}
                   <AvatarFallback>
-                    {user.email?.charAt(0).toUpperCase()}
+                    {userName?.charAt(0).toUpperCase() || userEmail?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -45,7 +53,10 @@ export function AdminHeader({ user }: AdminHeaderProps) {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <div className="flex items-center justify-start gap-2 p-2">
                 <div className="flex flex-col space-y-1 leading-none">
-                  <p className="font-medium text-sm">{user.email}</p>
+                  <p className="font-medium text-sm">{userName || userEmail}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {userEmail}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     Administrator
                   </p>
@@ -55,9 +66,13 @@ export function AdminHeader({ user }: AdminHeaderProps) {
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
+              <DropdownMenuItem asChild>
+                <form action={signOutToHomeAction} className="w-full">
+                  <button type="submit" className="flex items-center w-full">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </button>
+                </form>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

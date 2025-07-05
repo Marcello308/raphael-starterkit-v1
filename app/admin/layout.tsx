@@ -28,7 +28,7 @@ export default async function AdminLayout({
         <AdminHeader user={user} />
         
         {/* Main Content Area */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-800 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-admin-main-background p-6">
           {children}
         </main>
       </div>

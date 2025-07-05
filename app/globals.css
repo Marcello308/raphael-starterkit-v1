@@ -3,51 +3,67 @@
 @tailwind utilities;
 
 @layer base {
-  
-:root  {
-  --background: 262.1 100% 100%;
-  --foreground: 262.1 5% 10%;
-  --card: 262.1 50% 100%;
-  --card-foreground: 262.1 5% 15%;
-  --popover: 262.1 100% 100%;
-  --popover-foreground: 262.1 100% 10%;
-  --primary: 262.1 88.3% 57.8%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 262.1 30% 90%;
-  --secondary-foreground: 0 0% 0%;
-  --muted: 224.10000000000002 30% 95%;
-  --muted-foreground: 262.1 5% 40%;
-  --accent: 224.10000000000002 30% 90%;
-  --accent-foreground: 262.1 5% 15%;
-  --destructive: 0 100% 50%;
-  --destructive-foreground: 262.1 5% 100%;
-  --border: 262.1 30% 82%;
-  --input: 262.1 30% 50%;
-  --ring: 262.1 88.3% 57.8%;
-  --radius: 0.5rem;
-}
-.dark {
-  --background: 240 15% 6%;
-  --foreground: 0 0% 100%;
-  --card: 240 20% 10%;
-  --card-foreground: 0 0% 100%;
-  --popover: 240 20% 8%;
-  --popover-foreground: 0 0% 100%;
-  --primary: 220 90% 60%; /* 蓝色主色，科技感强 */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 15% 20%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: 240 10% 30%;
-  --muted-foreground: 0 0% 70%;
-  --accent: 220 70% 55%; /* 同样偏蓝但略微不同用于强调 */
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 100% 50%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 240 10% 25%;
-  --input: 240 10% 30%;
-  --ring: 220 90% 60%;
-  --radius: 0.75rem;
-}
+
+  :root {
+    --background: 262.1 100% 100%;
+    --foreground: 262.1 5% 10%;
+    --card: 262.1 50% 100%;
+    --card-foreground: 262.1 5% 15%;
+    --popover: 262.1 100% 100%;
+    --popover-foreground: 262.1 100% 10%;
+
+    --primary: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: 224.10000000000002 30% 95%;
+    --muted-foreground: 210 5% 45%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 262.1 5% 100%;
+
+    --border: 210 5% 85%;
+    --input: 262.1 30% 50%;
+    --ring: 217 91% 55%;
+    --radius: 0.5rem;
+
+    --admin-sidebar-background: 262.1 100% 100%;
+    --admin-sidebar-active-background: 217 91% 55%;
+    --admin-sidebar-active-foreground: 0 0% 100%;
+  }
+
+  .dark {
+    --background: 220 10% 8%;
+    --foreground: 0 0% 90%;
+    --admin-sidebar-background: 240 4% 8%;
+    --admin-main-background: 240 10% 7%;
+    --admin-header-background: 240 15% 7%;
+    --admin-sidebar-active-background: 217 91% 55%;
+    --admin-sidebar-active-foreground: 0 0% 100%;
+    --card: 220 8% 12%;
+    --card-foreground: 0 0% 90%;
+    --popover: 220 8% 10%;
+    --popover-foreground: 0 0% 90%;
+    --primary: 217 91% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 6% 18%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 220 6% 16%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 8% 20%;
+    --input: 220 8% 16%;
+    --ring: 217 91% 55%;
+    --radius: 0.75rem;
+  }
 
 }
 
@@ -55,6 +71,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

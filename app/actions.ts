@@ -129,6 +129,12 @@ export const signOutAction = async () => {
   return redirect("/sign-in");
 };
 
+export const signOutToHomeAction = async () => {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return redirect("/");
+};
+
 export async function createCheckoutSession(
   productId: string,
   email: string,

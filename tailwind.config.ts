@@ -24,6 +24,11 @@ const config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        "admin-sidebar-background": "hsl(var(--admin-sidebar-background))",
+        "admin-main-background": "hsl(var(--admin-main-background))",
+        "admin-header-background": "hsl(var(--admin-header-background))",
+        "admin-sidebar-active-background": "hsl(var(--admin-sidebar-active-background))",
+        "admin-sidebar-active-foreground": "hsl(var(--admin-sidebar-active-foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

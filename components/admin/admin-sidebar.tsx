@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/logo";
 import { 
   LayoutDashboard, 
   CreditCard, 
@@ -69,15 +70,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
   return (
     <div className="hidden md:flex md:w-64 md:flex-col">
-      <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-gray-900 dark:bg-gray-800">
+      <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-admin-sidebar-background border-r border-border">
         {/* Logo */}
         <div className="flex items-center flex-shrink-0 px-4 mb-6">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center">
-              <div className="w-4 h-4 bg-gray-900 rounded-sm"></div>
-            </div>
-            <span className="text-white font-semibold text-lg">Admin</span>
-          </div>
+          <Logo />
         </div>
 
         {/* Navigation */}
@@ -97,10 +93,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                  "group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 relative",
                   isActive
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    ? "bg-admin-sidebar-active-background text-admin-sidebar-active-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
                 <Icon className="mr-3 h-4 w-4" />
