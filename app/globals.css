@@ -76,3 +76,65 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 自定义动画 */
+@layer utilities {
+  .sidebar-collapse-animation {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .sidebar-text-slide-out {
+    animation: slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  .sidebar-text-slide-in {
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  @keyframes slideOut {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+      width: auto;
+    }
+    50% {
+      opacity: 0;
+      transform: translateX(8px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(8px);
+      width: 0;
+    }
+  }
+  
+  @keyframes slideIn {
+    0% {
+      opacity: 0;
+      transform: translateX(8px);
+      width: 0;
+    }
+    50% {
+      opacity: 0;
+      transform: translateX(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+      width: auto;
+    }
+  }
+  
+  .menu-button-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .menu-button-hover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .menu-button-hover:active {
+    transform: scale(0.95);
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Settings, LogOut } from "lucide-react";
+import { Bell, Settings, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu, 
@@ -15,9 +15,10 @@ import { signOutToHomeAction } from "@/app/actions";
 
 interface AdminHeaderProps {
   user: User;
+  onToggleSidebar?: () => void;
 }
 
-export function AdminHeader({ user }: AdminHeaderProps) {
+export function AdminHeader({ user, onToggleSidebar }: AdminHeaderProps) {
   // 获取用户头像和昵称
   const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
   const userName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0];
@@ -25,7 +26,19 @@ export function AdminHeader({ user }: AdminHeaderProps) {
 
   return (
     <header className="bg-admin-header-background border-b border-border shadow-sm">
-      <div className="flex items-center justify-end px-6 py-4">
+      <div className="flex items-center justify-between px-6 py-4">
+        {/* Left Side - Collapse Button */}
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleSidebar}
+            className="menu-button-hover hover:bg-secondary hover:text-accent"
+          >
+            <Menu className="h-5 w-5 transition-transform duration-300 ease-in-out" />
+          </Button>
+        </div>
+
         {/* Right Side Actions */}
         <div className="flex items-center space-x-4">
           {/* Theme Switcher */}
