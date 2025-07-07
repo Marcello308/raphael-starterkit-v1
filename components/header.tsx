@@ -63,8 +63,8 @@ export default function Header({ user }: HeaderProps) {
   return (
     <div className="sticky top-0 z-50 w-full p-4">
       <header className={`container mx-auto backdrop-blur supports-[backdrop-filter]:bg-background/60 rounded-3xl transition-all duration-500 ease-out ${
-        isScrolled 
-          ? 'bg-background/98 border border-border/30 shadow-lg shadow-black/5' 
+        isScrolled
+          ? 'bg-background border border-border/70 shadow-lg shadow-black/5'
           : 'bg-background/95 border border-transparent shadow-sm'
       }`}>
         <div className="flex h-16 items-center justify-between px-6">
