@@ -18,6 +18,11 @@ const sidebarItems = [
     href: "/admin",
     icon: LayoutDashboard,
   },
+  {
+    title: "Analysis",
+    href: "/admin/analysis",
+    icon: LayoutDashboard,
+  },
 ];
 
 import { User } from "@supabase/supabase-js";

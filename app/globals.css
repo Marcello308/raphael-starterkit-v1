@@ -45,6 +45,19 @@
     --admin-header-background: 240 15% 7%;
     --admin-sidebar-active-background: 217 91% 55%;
     --admin-sidebar-active-foreground: 0 0% 100%;
+    
+    /* 分析页面专用颜色变量 */
+    --analysis-background: 240 15% 10%;
+    --analysis-card: 240 15% 14%;
+    --analysis-card-secondary: 240 12% 18%;
+    --analysis-card-hover: 240 15% 20%;
+    --analysis-text: 0 0% 95%;
+    --analysis-text-secondary: 0 0% 75%;
+    --analysis-text-muted: 0 0% 65%;
+    --analysis-border: 240 10% 25%;
+    --analysis-button-hover: 220 80% 60%;
+    --analysis-accent: 217 91% 55%;
+    
     --card: 220 8% 12%;
     --card-foreground: 0 0% 90%;
     --popover: 220 8% 10%;
@@ -136,5 +149,93 @@
   
   .menu-button-hover:active {
     transform: scale(0.95);
+  }
+
+  /* 分析页面专用样式增强 */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* 平滑滚动 */
+  .analysis-smooth-scroll {
+    scroll-behavior: smooth;
+  }
+  
+  /* 分析卡片玻璃效果 */
+  .analysis-glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  /* 分析页面渐变装饰 */
+  .analysis-gradient-border {
+    position: relative;
+  }
+  
+  .analysis-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(240, 15%, 25%) 0%, transparent 50%, hsl(240, 15%, 25%) 100%);
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+  
+  /* 悬浮效果增强 */
+  .analysis-hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .analysis-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* 分析师头像光晕效果 */
+  .analysis-avatar-glow {
+    box-shadow: 0 0 20px rgba(255, 191, 0, 0.3);
+  }
+  
+  /* 分析按钮脉冲效果 */
+  .analysis-pulse {
+    animation: analysisPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes analysisPulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.02);
+    }
+  }
+  
+  /* 数据表格条纹效果 */
+  .analysis-table-stripe:nth-child(even) {
+    background-color: hsl(var(--analysis-card-secondary));
+  }
+  
+  /* 状态指示器动画 */
+  .analysis-status-indicator {
+    animation: analysisStatusBlink 1.5s ease-in-out infinite;
+  }
+  
+  @keyframes analysisStatusBlink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 }

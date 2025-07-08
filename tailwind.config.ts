@@ -29,6 +29,19 @@ const config = {
         "admin-header-background": "hsl(var(--admin-header-background))",
         "admin-sidebar-active-background": "hsl(var(--admin-sidebar-active-background))",
         "admin-sidebar-active-foreground": "hsl(var(--admin-sidebar-active-foreground))",
+        
+        // 分析页面专用颜色
+        "analysis-background": "hsl(var(--analysis-background))",
+        "analysis-card": "hsl(var(--analysis-card))",
+        "analysis-card-secondary": "hsl(var(--analysis-card-secondary))",
+        "analysis-card-hover": "hsl(var(--analysis-card-hover))",
+        "analysis-text": "hsl(var(--analysis-text))",
+        "analysis-text-secondary": "hsl(var(--analysis-text-secondary))",
+        "analysis-text-muted": "hsl(var(--analysis-text-muted))",
+        "analysis-border": "hsl(var(--analysis-border))",
+        "analysis-button-hover": "hsl(var(--analysis-button-hover))",
+        "analysis-accent": "hsl(var(--analysis-accent))",
+        
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
