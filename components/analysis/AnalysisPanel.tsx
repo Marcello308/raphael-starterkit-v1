@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation"; // 使用 Next.js 的 useRouter
-import { Brain, TrendingUp, Shield, Target, BarChart3, Activity, Clock, Search, Plus, Cpu, Zap, Crown, Bot, Sparkles } from "lucide-react";
+import { Brain, TrendingUp, Shield, Target, BarChart3, Activity, Clock, Search, Plus, Cpu, Zap, Crown, Bot, Sparkles, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -38,6 +38,18 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
   const dropdownRef = useRef<HTMLDivElement>(null);
   const progressListRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // 日期选择状态
+  const [startDate, setStartDate] = useState<string>(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
+  const [endDate, setEndDate] = useState<string>(() => {
+    const today = new Date();
+    const ninetyDaysAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+    return ninetyDaysAgo.toISOString().split('T')[0];
+  });
+  const [dateError, setDateError] = useState<string>("");
 
   // 股票历史记录（模拟数据）
   const stockHistory = [
@@ -197,7 +209,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
         .join('; '); // 使用分号和空格分隔各个推理条目
     }
     // 如果已经是字符串或者其他基本类型，直接转换为字符串
-    return String(reasoning || "暂无分析原因"); 
+    return String(reasoning || "暂无分析原因");
   };
 
   const languageModels = [
@@ -299,6 +311,64 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
     setSelectedLanguageModel(modelId);
   };
 
+  // 日期验证函数
+  const validateDateRange = (start: string, end: string) => {
+    if (!start || !end) {
+      setDateError("");
+      return true;
+    }
+
+    const startDateObj = new Date(start);
+    const endDateObj = new Date(end);
+    const diffDays = Math.abs((startDateObj.getTime() - endDateObj.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 180) {
+      setDateError("开始日期和结束日期不能跨度超过180天");
+      return false;
+    }
+
+    setDateError("");
+    return true;
+  };
+
+  const handleStartDateChange = (date: string) => {
+    setStartDate(date);
+    validateDateRange(date, endDate);
+  };
+
+  const handleEndDateChange = (date: string) => {
+    setEndDate(date);
+    validateDateRange(startDate, date);
+  };
+
+  // 快捷日期选择函数
+  const handleQuickDateSelect = (type: 'month' | 'quarter' | 'half-year') => {
+    const today = new Date();
+    const endDateObj = today;
+    let startDateObj: Date;
+
+    switch (type) {
+      case 'month':
+        startDateObj = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case 'quarter':
+        startDateObj = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case 'half-year':
+        startDateObj = new Date(today.getTime() - 180 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        return;
+    }
+
+    const startDateStr = startDateObj.toISOString().split('T')[0];
+    const endDateStr = endDateObj.toISOString().split('T')[0];
+
+    setStartDate(endDateStr);
+    setEndDate(startDateStr);
+    validateDateRange(endDateStr, startDateStr);
+  };
+
   const handleStockSelect = (stockCode: string, stockName?: string) => {
     if (stockName) {
       setSelectedStock(`${stockCode} - ${stockName}`);
@@ -357,31 +427,67 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
     setShowAnalysisDialog(true);
     setProgressSteps([]);
     setAnalysisProgress("正在准备分析...");
-    
+
     // 创建一个新的 AbortController 实例
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
+
+    // 🚀 模拟数据开关 - 设置为 false 使用真实API
+    const USE_MOCK_DATA = true;
     
+    if (USE_MOCK_DATA) {
+      console.log('使用模拟数据进行调试');
+      
+      // 模拟进度更新
+      const mockProgress = [
+        { agent: "Warren Buffett", status: "分析基本面数据", timestamp: new Date().toISOString() },
+        { agent: "Peter Lynch", status: "评估成长潜力", timestamp: new Date().toISOString() },
+        { agent: "Technical Analyst", status: "分析技术指标", timestamp: new Date().toISOString() },
+        { agent: "Fundamentals Analyst", status: "计算估值模型", timestamp: new Date().toISOString() }
+      ];
+      
+      // 模拟进度步骤
+      for (let i = 0; i < mockProgress.length; i++) {
+        const step = mockProgress[i];
+        setAnalysisProgress(`${step.agent} - ${step.status}`);
+        setProgressSteps(prev => [...prev, step]);
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+      
+      setAnalysisProgress("分析完成，正在跳转...");
+      
+      // 跳转到详情页
+      setTimeout(() => {
+        setIsAnalyzing(false);
+        setShowAnalysisDialog(false);
+        setAnalysisProgress("");
+        setProgressSteps([]);
+        router.push("/analysis-details");
+      }, 1000);
+      
+      return; // 使用模拟数据时直接返回，不执行真实API调用
+    }
+
     try {
       // 解析股票代码 - 支持直接输入或选择格式
       let stockCode = selectedStock.trim();
-      
+
       // 如果是 "代码 - 名称" 格式，提取代码部分
       if (stockCode.includes(' - ')) {
         stockCode = stockCode.split(' - ')[0].trim();
       }
-      
+
       // 验证股票代码不为空
       if (!stockCode) {
         throw new Error('请输入有效的股票代码');
       }
-      
+
       console.log('股票代码解析:', {
         原始输入: selectedStock,
         解析后代码: stockCode,
         将发送的tickers: [stockCode]
       });
-      
+
       // 获取选中模型的信息
       const selectedModel = languageModels.find(m => m.model_name === selectedLanguageModel);
       if (!selectedModel) {
@@ -392,7 +498,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       const agentModels = selectedAgents.map((agentId) => {
         // 查找选中的分析师信息
         const agent = allAgents.find(a => a.key === agentId);
-        
+
         return {
           agent_id: agentId, // 使用实际的agent key作为ID
           model_name: selectedModel.model_name,
@@ -430,7 +536,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
         console.log('分析进度:', progress);
         const progressText = `${progress.agent} - ${progress.status}`;
         setAnalysisProgress(progressText);
-        
+
         // 添加到进度步骤列表
         setProgressSteps(prev => {
           const newSteps = [...prev, progress];
@@ -447,12 +553,12 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       // 调试API响应数据
       console.log('API完整响应:', result);
       console.log('API返回的原始analyst_signals:', result.data.analyst_signals);
-      
+
       // 添加空值检查防止 "Cannot read properties of null" 错误
       if (!result.data.analyst_signals) {
         throw new Error('API响应中缺少analyst_signals数据');
       }
-      
+
       console.log('API返回的analyst_signals键列表:', Object.keys(result.data.analyst_signals));
       console.log('将用于查找信号的股票代码 (stockCode):', stockCode);
       console.log('选中的分析师:', selectedAgents);
@@ -460,7 +566,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       // 转换API响应为组件需要的格式
       const analysisResults = selectedAgents.map(agentId => {
         const selectedAgent = allAgents.find(a => a.key === agentId);
-        
+
         // 尝试多种可能的键格式来查找信号数据
         const possibleKeys = [
           agentId,                    // 直接使用 agentId (如: sentiment_agent)
@@ -468,22 +574,22 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
           `${agentId}Agent`,          // 驼峰格式 (如: sentimentAgent)
           agentId.replace(/_/g, ''),  // 去掉下划线 (如: sentimentagent)
         ];
-        
+
         let agentSignal = null;
         let usedKey = '';
-        
+
         // 尝试每种可能的键格式
         for (const key of possibleKeys) {
           // 添加更安全的检查，确保key存在且有数据
-          if (result.data.analyst_signals[key] && 
-              typeof result.data.analyst_signals[key] === 'object' && 
-              result.data.analyst_signals[key][stockCode]) {
+          if (result.data.analyst_signals[key] &&
+            typeof result.data.analyst_signals[key] === 'object' &&
+            result.data.analyst_signals[key][stockCode]) {
             agentSignal = result.data.analyst_signals[key][stockCode];
             usedKey = key;
             break;
           }
         }
-        
+
         console.log(`处理分析师 ${agentId}:`, {
           display_name: selectedAgent?.display_name,
           possibleKeys: possibleKeys,
@@ -493,7 +599,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
           allAvailableKeys: Object.keys(result.data.analyst_signals), // 显示所有可用的键
           rawAgentData: selectedAgent // 原始分析师数据
         });
-        
+
         if (!agentSignal) {
           // 如果没有找到特定代理的信号，使用默认值
           console.warn(`未找到分析师 ${agentId} 的信号数据，使用默认值。`);
@@ -526,7 +632,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
 
         return {
           agent: selectedAgent?.display_name || agentId,
-          agentAvatar: 'avatar' in selectedAgent ? selectedAgent.avatar : selectedAgent?.key,
+          agentAvatar: selectedAgent && 'avatar' in selectedAgent ? selectedAgent.avatar : selectedAgent?.key,
           analysisType: "综合分析",
           signal: signalMap[agentSignal.signal] || '持有',
           confidence: Math.round(agentSignal.confidence),
@@ -540,9 +646,9 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       // 添加空值检查防止 "Cannot read properties of null" 错误
       console.log('API返回的decisions数据:', result.data.decisions);
       console.log('API响应的完整data结构:', Object.keys(result.data || {}));
-      
+
       let portfolioStrategy;
-      
+
       if (!result.data.decisions || Object.keys(result.data.decisions).length === 0) {
         console.warn('API响应中缺少decisions数据，使用默认投资策略');
         // 如果没有decisions数据，创建一个默认的投资策略
@@ -555,7 +661,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
         };
       } else {
         const decision = result.data.decisions[stockCode];
-        
+
         if (!decision) {
           console.warn(`未获取到股票 ${stockCode} 的投资决策数据，使用默认策略`);
           portfolioStrategy = {
@@ -584,10 +690,10 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
           };
         }
       }
-      
+
       // 显示完成状态
       setAnalysisProgress("分析完成，正在跳转...");
-      
+
       // 调试输出
       console.log('准备跳转到详情页面:', {
         analysisResults, // 确认分析结果是否完整
@@ -598,31 +704,31 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
         isAnalysisResultsArray: Array.isArray(analysisResults), // 确认是否是数组
         isPortfolioStrategyObject: typeof portfolioStrategy === 'object' && portfolioStrategy !== null // 确认是否是对象
       });
-      
+
       // 延迟一下让用户看到完成状态，然后关闭弹窗并跳转
       setTimeout(() => {
         setIsAnalyzing(false);
         setShowAnalysisDialog(false);
         setAnalysisProgress("");
         setProgressSteps([]);
-        
+
         // 导航到分析详情页面
         router.push("/analysis-details"); // 替换 navigate，并移除 state 参数，Next.js 不直接支持
       }, 1000);
-      
+
     } catch (error) {
       console.error('分析失败:', error);
       setIsAnalyzing(false);
       setShowAnalysisDialog(false);
       setAnalysisProgress("");
       setProgressSteps([]);
-      
+
       // 如果是用户主动中断，不显示错误提示
       if (error instanceof DOMException && error.name === 'AbortError') {
         console.log('分析被用户中断。');
         return; // 不显示toast
       }
-      
+
       // 使用toast显示错误信息
       toast({
         title: "分析失败",
@@ -636,13 +742,13 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
     <div className="space-y-8">
       {/* 分析进度弹窗 */}
       <Dialog open={showAnalysisDialog} onOpenChange={setShowAnalysisDialog}>
-        <DialogContent className="sm:max-w-lg bg-gradient-to-br from-analysis-card via-analysis-card to-analysis-card-secondary border-analysis-border backdrop-blur-md shadow-2xl rounded-xl">
+        <DialogContent className="sm:max-w-lg bg-card border backdrop-blur-md shadow-2xl rounded-xl">
           <DialogHeader className="space-y-3">
             <DialogTitle className="text-center text-2xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
               正在分析 {selectedStock}
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="py-4 space-y-6">
             {/* 加载动画 */}
             <div className="flex justify-center">
@@ -654,20 +760,20 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                 </div>
               </div>
             </div>
-            
+
             {/* 当前进度 */}
             <div className="text-center space-y-3">
               <div className="bg-analysis-card-secondary rounded-xl p-4 border border-analysis-border shadow-sm">
                 <p className="text-analysis-text font-semibold text-lg">{analysisProgress}</p>
-                <p className="text-analysis-text-muted text-sm mt-1">这可能需要几分钟时间，请耐心等待...</p>
+                <p className="text-analysis-text-muted text-sm mt-1">这可能需要1~2分钟时间，请耐心等待...</p>
               </div>
             </div>
-            
+
             {/* 进度列表 */}
             {progressSteps.length > 0 && (
               <div className="space-y-3">
                 <div className="text-analysis-text-secondary text-sm font-medium text-center">分析步骤</div>
-                <div 
+                <div
                   ref={progressListRef}
                   className="h-52 overflow-y-auto scrollbar-hide space-y-3 px-1"
                   style={{
@@ -676,8 +782,8 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                   }}
                 >
                   {progressSteps.map((step, index) => (
-                    <div 
-                      key={index} 
+                    <div
+                      key={index}
                       className="flex items-center space-x-3 text-sm p-3 bg-analysis-card-secondary rounded-xl border border-analysis-border hover:bg-analysis-card-hover transition-all duration-200 min-h-[3.5rem] shadow-sm"
                     >
                       <div className="w-2 h-2 bg-green-400 rounded-full flex-shrink-0 animate-pulse"></div>
@@ -707,18 +813,18 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       </Dialog>
 
       {/* 主要分析卡片 */}
-      <Card className="bg-analysis-card border border-analysis-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative">
+      <Card className="bg-card border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative">
         <div className="relative z-10">
           <CardHeader className="pb-8">
-            <CardTitle className="text-2xl font-bold text-analysis-text">
+            <CardTitle className="text-2xl font-bold text-foreground">
               AI股票分析
             </CardTitle>
-            <p className="text-analysis-text-muted mt-2">选择股票和AI分析师，获取专业的投资建议</p>
+            <p className="text-muted-foreground mt-2">选择股票和AI分析师，获取专业的投资建议</p>
           </CardHeader>
           <CardContent className="space-y-8">
             {/* 股票选择 */}
             <div className="space-y-3">
-              <label className="text-analysis-text font-semibold text-lg">1. 选择股票</label>
+              <label className="text-foreground font-semibold text-lg">1. 选择股票</label>
               <div className="relative" ref={dropdownRef}>
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-analysis-text-muted z-10" />
                 <Input
@@ -731,9 +837,9 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                     }
                   }}
                   onBlur={handleDirectInput}
-                  className="pl-10 bg-analysis-card-secondary border-analysis-border text-analysis-text placeholder-analysis-text-muted h-12 text-lg backdrop-blur-sm rounded-xl hover:bg-analysis-card-hover focus:bg-analysis-card-hover transition-all duration-200"
+                  className="pl-10 bg-analysis-card-secondary border-analysis-border text-analysis-text placeholder-analysis-text-muted h-12 text-base backdrop-blur-sm rounded-xl hover:bg-analysis-card-hover focus:bg-analysis-card-hover focus-visible:ring-amber-400/50  transition-all duration-200"
                 />
-                
+
                 {showDropdown && (
                   <div className="absolute top-full left-0 right-0 z-20 mt-1 bg-analysis-card border border-analysis-border rounded-xl shadow-lg max-h-64 overflow-y-auto backdrop-blur-md">
                     {filteredResults.map((stock) => (
@@ -741,7 +847,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                         key={stock.code}
                         className="flex items-center justify-between p-3 hover:bg-analysis-card-hover transition-all duration-200 border-b border-analysis-border last:border-b-0"
                       >
-                        <div 
+                        <div
                           className="flex-1 cursor-pointer"
                           onClick={() => handleStockSelect(stock.code, stock.name)}
                         >
@@ -750,9 +856,8 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                         </div>
                         <div className="text-right mr-2">
                           <div className="text-analysis-text">¥{stock.price}</div>
-                          <div className={`text-sm ${
-                            stock.change.startsWith('+') ? 'text-green-400' : 'text-red-400'
-                          }`}>
+                          <div className={`text-sm ${stock.change.startsWith('+') ? 'text-green-400' : 'text-red-400'
+                            }`}>
                             {stock.change}
                           </div>
                         </div>
@@ -771,7 +876,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                     ))}
                   </div>
                 )}
-                
+
                 {selectedStock && (
                   <Button
                     variant="ghost"
@@ -812,9 +917,8 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                       variant="outline"
                       size="sm"
                       onClick={() => handleStockSelect(stock.code, stock.name)}
-                      className={`bg-analysis-card-secondary border-analysis-border text-analysis-text-secondary hover:bg-analysis-card-hover hover:text-analysis-text transition-all duration-200 rounded-xl ${
-                        selectedStock === `${stock.code} - ${stock.name}` ? 'border-amber-400/50 bg-amber-500/20 text-amber-300' : ''
-                      }`}
+                      className={`bg-analysis-card-secondary border-analysis-border text-analysis-text-secondary hover:bg-analysis-card-hover hover:text-analysis-text transition-all duration-200 rounded-xl ${selectedStock === `${stock.code} - ${stock.name}` ? 'border-amber-400/50 bg-amber-500/20 text-amber-300' : ''
+                        }`}
                     >
                       <span className="text-xs">{stock.code}</span>
                       <span className="ml-1 text-xs opacity-80">{stock.name}</span>
@@ -826,8 +930,8 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
 
             {/* AI分析师选择 */}
             <div className="space-y-6">
-              <label className="text-analysis-text font-semibold text-lg">2. 选择AI分析师</label>
-              
+              <label className="text-foreground font-semibold text-lg">2. 选择AI分析师</label>
+
               {/* 传奇投资大师 */}
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
@@ -838,11 +942,10 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                   {legendaryAgents.map((agent) => (
                     <div
                       key={agent.key}
-                      className={`group p-6 rounded-xl border cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                        selectedAgents.includes(agent.key)
+                      className={`group p-6 rounded-xl border cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${selectedAgents.includes(agent.key)
                           ? "bg-gradient-to-br from-amber-500/20 to-amber-600/10 border-amber-400/50 shadow-amber-500/20"
                           : "bg-analysis-card-secondary border-analysis-border hover:border-amber-400/30 hover:bg-analysis-card-hover shadow-sm"
-                      }`}
+                        }`}
                       onClick={() => handleAgentToggle(agent.key)}
                     >
                       <div className="flex items-center space-x-4">
@@ -852,22 +955,20 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                           className=""
                         />
                         <div className="relative">
-                          <Avatar className={`h-12 w-12 ring-4 transition-all ${
-                            selectedAgents.includes(agent.key)
+                          <Avatar className={`h-12 w-12 ring-4 transition-all ${selectedAgents.includes(agent.key)
                               ? "ring-amber-400/70 shadow-lg shadow-amber-400/20"
                               : "ring-amber-400/30 group-hover:ring-amber-400/50"
-                          }`}>
+                            }`}>
                             <AvatarImage src={agent.avatar} alt={agent.display_name} />
                             <AvatarFallback className="bg-analysis-card text-analysis-text font-semibold">
                               {agent.display_name.split(' ').map(n => n[0]).join('')}
                             </AvatarFallback>
                           </Avatar>
                           {/* AI标识徽章 */}
-                          <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-analysis-card flex items-center justify-center transition-all ${
-                            selectedAgents.includes(agent.key)
+                          <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-analysis-card flex items-center justify-center transition-all ${selectedAgents.includes(agent.key)
                               ? "bg-amber-500 text-black"
                               : "bg-gradient-to-br from-purple-500 to-blue-600 text-white"
-                          }`}>
+                            }`}>
                             <Brain className="h-3 w-3" />
                           </div>
                         </div>
@@ -893,11 +994,10 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
                     return (
                       <div
                         key={analyst.key}
-                        className={`group p-6 rounded-xl border cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                          selectedAgents.includes(analyst.key)
+                        className={`group p-6 rounded-xl border cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${selectedAgents.includes(analyst.key)
                             ? "bg-gradient-to-br from-purple-500/20 to-purple-600/10 border-purple-400/50 shadow-purple-500/20"
                             : "bg-analysis-card-secondary border-analysis-border hover:border-purple-400/30 hover:bg-analysis-card-hover shadow-sm"
-                        }`}
+                          }`}
                         onClick={() => handleAgentToggle(analyst.key)}
                       >
                         <div className="flex items-center space-x-4">
@@ -921,37 +1021,34 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
 
             {/* 语言模型选择 */}
             <div className="space-y-4">
-              <label className="text-analysis-text font-semibold text-lg">3. 选择语言模型</label>
+              <label className="text-foreground font-semibold text-lg">3. 选择语言模型</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {languageModels.map((model) => {
                   return (
                     <div
                       key={model.model_name}
-                      className={`group p-4 rounded-xl border cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                        selectedLanguageModel === model.model_name
+                      className={`group p-4 rounded-xl border cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${selectedLanguageModel === model.model_name
                           ? "bg-gradient-to-br from-blue-500/20 to-blue-600/10 border-blue-400/50 shadow-blue-500/20"
                           : "bg-analysis-card-secondary border-analysis-border hover:border-blue-400/30 hover:bg-analysis-card-hover shadow-sm"
-                      }`}
+                        }`}
                       onClick={() => handleLanguageModelSelect(model.model_name)}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className={`p-2 rounded-lg transition-all ${
-                          selectedLanguageModel === model.model_name 
-                            ? "bg-blue-500/20" 
+                        <div className={`p-2 rounded-lg transition-all ${selectedLanguageModel === model.model_name
+                            ? "bg-blue-500/20"
                             : "bg-analysis-card hover:bg-analysis-card-hover"
-                        }`}>
-                          <BrandLogo 
-                            src={model.logo} 
+                          }`}>
+                          <BrandLogo
+                            src={model.logo}
                             alt={`${model.provider} logo`}
                             className="h-5 w-5"
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className={`font-semibold text-sm transition-colors ${
-                            selectedLanguageModel === model.model_name 
-                              ? "text-blue-300" 
+                          <div className={`font-semibold text-sm transition-colors ${selectedLanguageModel === model.model_name
+                              ? "text-blue-300"
                               : "text-analysis-text"
-                          }`}>
+                            }`}>
                             {model.display_name}
                           </div>
                           <div className="text-analysis-text-muted text-xs mt-1 truncate">
@@ -965,9 +1062,77 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
               </div>
             </div>
 
+            {/* 日期选择 */}
+            <div className="space-y-4">
+              <label className="text-foreground font-semibold text-lg">4. 选择分析日期范围 (可选)</label>
+
+
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-analysis-text-secondary text-sm">开始日期</label>
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => handleStartDateChange(e.target.value)}
+                    onClick={(e) => e.currentTarget.showPicker?.()}
+                    className="bg-analysis-card-secondary border-analysis-border text-analysis-text rounded-xl cursor-pointer"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-analysis-text-secondary text-sm">结束日期</label>
+                  <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => handleEndDateChange(e.target.value)}
+                    onClick={(e) => e.currentTarget.showPicker?.()}
+                    className="bg-analysis-card-secondary border-analysis-border text-analysis-text rounded-xl cursor-pointer"
+                  />
+                </div>
+              </div>
+              {dateError && (
+                <div className="text-red-400 text-sm bg-red-500/10 border border-red-400/30 rounded-lg p-3">
+                  {dateError}
+                </div>
+              )}
+
+              {/* 快捷日期选择 */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickDateSelect('month')}
+                  className="bg-analysis-card-secondary border-analysis-border text-analysis-text-secondary hover:bg-analysis-card-hover hover:text-analysis-text transition-all duration-200 rounded-lg"
+                >
+                  近一个月
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickDateSelect('quarter')}
+                  className="bg-analysis-card-secondary border-analysis-border text-analysis-text-secondary hover:bg-analysis-card-hover hover:text-analysis-text transition-all duration-200 rounded-lg"
+                >
+                  近三个月
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickDateSelect('half-year')}
+                  className="bg-analysis-card-secondary border-analysis-border text-analysis-text-secondary hover:bg-analysis-card-hover hover:text-analysis-text transition-all duration-200 rounded-lg"
+                >
+                  近半年
+                </Button>
+              </div>
+              <div className="text-analysis-text-muted text-xs">
+                • 日期范围为非必选项，留空将使用默认时间段进行分析<br />
+                • 开始日期和结束日期跨度不能超过180天<br />
+                • 开始日期默认为今天，结束日期默认为90天前
+              </div>
+            </div>
+
             <Button
               onClick={runAnalysis}
-              disabled={!selectedStock || selectedAgents.length === 0 || !selectedLanguageModel || isAnalyzing}
+              disabled={!selectedStock || selectedAgents.length === 0 || !selectedLanguageModel || isAnalyzing || !!dateError}
               className="w-full bg-blue-600 hover:bg-analysis-button-hover text-white font-bold py-4 text-lg rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:bg-blue-600"
             >
               {isAnalyzing ? (

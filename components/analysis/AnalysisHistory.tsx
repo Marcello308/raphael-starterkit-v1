@@ -145,13 +145,13 @@ export const AnalysisHistory = () => {
   const HistoryItem = ({ item }: { item: AnalysisHistoryItem }) => (
     <div
       onClick={() => handleHistoryClick(item)}
-      className="p-3 bg-analysis-card-secondary rounded-xl hover:bg-analysis-card-hover transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md"
+      className="p-3 bg-muted/30 rounded-xl hover:bg-muted/50 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2 mb-1">
-            <span className="text-analysis-text font-medium text-sm">{item.stockCode}</span>
-            <span className="text-analysis-text-muted text-xs truncate">{item.stockName}</span>
+            <span className="text-foreground font-medium text-sm">{item.stockCode}</span>
+            <span className="text-muted-foreground text-xs truncate">{item.stockName}</span>
           </div>
           <div className="flex items-center space-x-2 mb-1">
             <Badge className={`px-2 py-0.5 text-xs font-semibold rounded-lg ${getActionColor(item.action)}`}>
@@ -159,24 +159,24 @@ export const AnalysisHistory = () => {
             </Badge>
             <span className="text-amber-400 text-xs font-medium">{item.confidence}%</span>
           </div>
-          <div className="text-analysis-text-muted text-xs">{item.analysisDate}</div>
+          <div className="text-muted-foreground text-xs">{item.analysisDate}</div>
         </div>
-        <ChevronRight className="h-4 w-4 text-analysis-text-muted group-hover:text-amber-400 transition-colors flex-shrink-0" />
+        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-amber-400 transition-colors flex-shrink-0" />
       </div>
     </div>
   );
 
   return (
-    <Card className="bg-analysis-card border border-analysis-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+    <Card className="bg-card border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
       <CardHeader className="pb-3">
-        <CardTitle className="text-analysis-text flex items-center space-x-2 text-base">
+        <CardTitle className="text-foreground flex items-center space-x-2 text-base">
           <Clock className="h-4 w-4 text-blue-400" />
           <span>分析历史</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         {historyData.length === 0 ? (
-          <p className="text-analysis-text-muted text-center py-4 text-sm">暂无分析历史</p>
+          <p className="text-muted-foreground text-center py-4 text-sm">暂无分析历史</p>
         ) : (
           <div className="space-y-3">
             {displayedHistory.map((item) => (
@@ -188,15 +188,15 @@ export const AnalysisHistory = () => {
                 <DialogTrigger asChild>
                   <Button 
                     variant="ghost" 
-                    className="w-full text-amber-400 hover:text-amber-300 hover:bg-analysis-card-hover mt-4 h-8 text-xs rounded-xl transition-all duration-200"
+                    className="w-full text-amber-400 hover:text-amber-300 hover:bg-muted/50 mt-4 h-8 text-xs rounded-xl transition-all duration-200"
                   >
                     <Eye className="h-3 w-3 mr-1" />
                     查看更多 ({historyData.length - 5}条)
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-analysis-card border-analysis-border text-analysis-text max-w-2xl max-h-[80vh] overflow-hidden rounded-xl">
+                <DialogContent className="bg-card border text-foreground max-w-2xl max-h-[80vh] overflow-hidden rounded-xl">
                   <DialogHeader>
-                    <DialogTitle className="text-analysis-text flex items-center space-x-2">
+                    <DialogTitle className="text-foreground flex items-center space-x-2">
                       <Clock className="h-5 w-5 text-amber-400" />
                       <span>分析历史 (全部 {historyData.length} 条)</span>
                     </DialogTitle>

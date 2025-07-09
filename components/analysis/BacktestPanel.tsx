@@ -171,16 +171,16 @@ export const BacktestPanel = () => {
     }, 3000);
   };
   return <div className="space-y-6">
-      <Card className="bg-analysis-card border border-analysis-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative">
+      <Card className="bg-card border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative">
         <div className="relative z-10">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-analysis-text to-analysis-text-secondary bg-clip-text text-transparent flex items-center space-x-2">
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent flex items-center space-x-2">
                   <Calendar className="h-6 w-6 text-amber-400" />
                   <span>{t.title}</span>
                 </CardTitle>
-                <p className="text-analysis-text-muted mt-2">{t.subtitle}</p>
+                <p className="text-muted-foreground mt-2">{t.subtitle}</p>
               </div>
               
             </div>
@@ -188,15 +188,15 @@ export const BacktestPanel = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-analysis-text font-medium mb-2 block">{t.selectStock}</label>
+                <label className="text-foreground font-medium mb-2 block">{t.selectStock}</label>
                 <Select value={backtestConfig.stock} onValueChange={value => setBacktestConfig(prev => ({
                 ...prev,
                 stock: value
               }))}>
-                  <SelectTrigger className="bg-analysis-card-secondary border-analysis-border text-analysis-text h-12 backdrop-blur-sm rounded-xl hover:bg-analysis-card-hover transition-all duration-200">
+                  <SelectTrigger className="bg-muted/30 border h-12 backdrop-blur-sm rounded-xl hover:bg-muted/50 transition-all duration-200">
                     <SelectValue placeholder={t.selectStockPlaceholder} />
                   </SelectTrigger>
-                  <SelectContent className="bg-analysis-card border-analysis-border backdrop-blur-md rounded-xl">
+                  <SelectContent className="bg-card border backdrop-blur-md rounded-xl">
                     <SelectItem value="000001">000001 - {language === 'zh' ? '平安银行' : 'Ping An Bank'}</SelectItem>
                     <SelectItem value="600036">600036 - {language === 'zh' ? '招商银行' : 'China Merchants Bank'}</SelectItem>
                     <SelectItem value="600519">600519 - {language === 'zh' ? '贵州茅台' : 'Kweichow Moutai'}</SelectItem>
@@ -205,15 +205,15 @@ export const BacktestPanel = () => {
               </div>
 
               <div>
-                <label className="text-analysis-text font-medium mb-2 block">{t.selectAgent}</label>
+                <label className="text-foreground font-medium mb-2 block">{t.selectAgent}</label>
                 <Select value={backtestConfig.agent} onValueChange={value => setBacktestConfig(prev => ({
                 ...prev,
                 agent: value
               }))}>
-                  <SelectTrigger className="bg-analysis-card-secondary border-analysis-border text-analysis-text h-12 backdrop-blur-sm rounded-xl hover:bg-analysis-card-hover transition-all duration-200">
+                  <SelectTrigger className="bg-muted/30 border h-12 backdrop-blur-sm rounded-xl hover:bg-muted/50 transition-all duration-200">
                     <SelectValue placeholder={t.selectAgentPlaceholder} />
                   </SelectTrigger>
-                  <SelectContent className="bg-analysis-card border-analysis-border backdrop-blur-md rounded-xl">
+                  <SelectContent className="bg-card border backdrop-blur-md rounded-xl">
                     <SelectItem value="warren-buffett">Warren Buffett</SelectItem>
                     <SelectItem value="peter-lynch">Peter Lynch</SelectItem>
                     <SelectItem value="ben-graham">Ben Graham</SelectItem>
@@ -222,19 +222,19 @@ export const BacktestPanel = () => {
               </div>
 
               <div>
-                <label className="text-analysis-text font-medium mb-2 block">{t.startDate}</label>
+                <label className="text-foreground font-medium mb-2 block">{t.startDate}</label>
                 <Input type="date" value={backtestConfig.startDate} onChange={e => setBacktestConfig(prev => ({
                 ...prev,
                 startDate: e.target.value
-              }))} className="bg-analysis-card-secondary border-analysis-border text-analysis-text h-12 backdrop-blur-sm rounded-xl hover:bg-analysis-card-hover focus:bg-analysis-card-hover transition-all duration-200" />
+              }))} className="bg-muted/30 border h-12 backdrop-blur-sm rounded-xl hover:bg-muted/50 focus:bg-muted/50 transition-all duration-200" />
               </div>
 
               <div>
-                <label className="text-analysis-text font-medium mb-2 block">{t.endDate}</label>
+                <label className="text-foreground font-medium mb-2 block">{t.endDate}</label>
                 <Input type="date" value={backtestConfig.endDate} onChange={e => setBacktestConfig(prev => ({
                 ...prev,
                 endDate: e.target.value
-              }))} className="bg-analysis-card-secondary border-analysis-border text-analysis-text h-12 backdrop-blur-sm rounded-xl hover:bg-analysis-card-hover focus:bg-analysis-card-hover transition-all duration-200" />
+              }))} className="bg-muted/30 border h-12 backdrop-blur-sm rounded-xl hover:bg-muted/50 focus:bg-muted/50 transition-all duration-200" />
               </div>
             </div>
 
@@ -251,32 +251,32 @@ export const BacktestPanel = () => {
       {/* 回测结果 */}
       {backtestResults && <>
           {/* 投资组合摘要 */}
-          <Card className="bg-gradient-to-br from-analysis-card via-analysis-card to-analysis-card-secondary border-analysis-border backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-card border backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-analysis-text to-analysis-text-secondary bg-clip-text text-transparent">{t.portfolioSummary}</CardTitle>
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">{t.portfolioSummary}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-analysis-text-muted text-sm">{t.cashBalance}</div>
-                  <div className="text-analysis-text text-lg font-medium">
+                  <div className="text-muted-foreground text-sm">{t.cashBalance}</div>
+                  <div className="text-foreground text-lg font-medium">
                     ¥{backtestResults.summary.cashBalance.toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-analysis-text-muted text-sm">{t.positionValue}</div>
-                  <div className="text-analysis-text text-lg font-medium">
+                  <div className="text-muted-foreground text-sm">{t.positionValue}</div>
+                  <div className="text-foreground text-lg font-medium">
                     ¥{backtestResults.summary.totalPositionValue.toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-analysis-text-muted text-sm">{t.totalValue}</div>
-                  <div className="text-analysis-text text-lg font-medium">
+                  <div className="text-muted-foreground text-sm">{t.totalValue}</div>
+                  <div className="text-foreground text-lg font-medium">
                     ¥{backtestResults.summary.totalValue.toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-analysis-text-muted text-sm">{t.return}</div>
+                  <div className="text-muted-foreground text-sm">{t.return}</div>
                   <div className={`text-lg font-medium flex items-center justify-center space-x-1 ${backtestResults.summary.return >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                     {backtestResults.summary.return >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                     <span>{backtestResults.summary.return}%</span>
@@ -285,16 +285,16 @@ export const BacktestPanel = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div className="text-center p-4 bg-analysis-card-secondary border border-analysis-border rounded-xl backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="text-analysis-text-muted text-sm">{t.sharpeRatio}</div>
-                  <div className="text-analysis-text text-lg font-medium">{backtestResults.summary.sharpeRatio}</div>
+                <div className="text-center p-4 bg-muted/30 border rounded-xl backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="text-muted-foreground text-sm">{t.sharpeRatio}</div>
+                  <div className="text-foreground text-lg font-medium">{backtestResults.summary.sharpeRatio}</div>
                 </div>
-                <div className="text-center p-4 bg-analysis-card-secondary border border-analysis-border rounded-xl backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="text-analysis-text-muted text-sm">{t.sortinoRatio}</div>
-                  <div className="text-analysis-text text-lg font-medium">{backtestResults.summary.sortinoRatio}</div>
+                <div className="text-center p-4 bg-muted/30 border rounded-xl backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="text-muted-foreground text-sm">{t.sortinoRatio}</div>
+                  <div className="text-foreground text-lg font-medium">{backtestResults.summary.sortinoRatio}</div>
                 </div>
-                <div className="text-center p-4 bg-analysis-card-secondary border border-analysis-border rounded-xl backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="text-analysis-text-muted text-sm">{t.maxDrawdown}</div>
+                <div className="text-center p-4 bg-muted/30 border rounded-xl backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200">
+                  <div className="text-muted-foreground text-sm">{t.maxDrawdown}</div>
                   <div className="text-red-400 text-lg font-medium">{backtestResults.summary.maxDrawdown}%</div>
                 </div>
               </div>
@@ -302,40 +302,40 @@ export const BacktestPanel = () => {
           </Card>
 
           {/* 交易记录 */}
-          <Card className="bg-gradient-to-br from-analysis-card via-analysis-card to-analysis-card-secondary border-analysis-border backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
+          <Card className="bg-card border backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-analysis-text to-analysis-text-secondary bg-clip-text text-transparent">{t.dailyTrades}</CardTitle>
+              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">{t.dailyTrades}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-analysis-border">
-                      <th className="text-left text-analysis-text-secondary py-2">{t.date}</th>
-                      <th className="text-left text-analysis-text-secondary py-2">{t.stock}</th>
-                      <th className="text-left text-analysis-text-secondary py-2">{t.action}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.quantity}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.price}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.shares}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.positionValueTable}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.bullish}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.bearish}</th>
-                      <th className="text-right text-analysis-text-secondary py-2">{t.neutral}</th>
+                    <tr className="border-b">
+                      <th className="text-left text-muted-foreground py-2">{t.date}</th>
+                      <th className="text-left text-muted-foreground py-2">{t.stock}</th>
+                      <th className="text-left text-muted-foreground py-2">{t.action}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.quantity}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.price}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.shares}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.positionValueTable}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.bullish}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.bearish}</th>
+                      <th className="text-right text-muted-foreground py-2">{t.neutral}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {backtestResults.trades.map((trade: any, index: number) => <tr key={index} className="border-b border-analysis-border hover:bg-analysis-card-hover transition-all duration-200">
-                        <td className="text-analysis-text py-3">{trade.date}</td>
-                        <td className="text-analysis-text py-3">{trade.ticker}</td>
+                    {backtestResults.trades.map((trade: any, index: number) => <tr key={index} className="border-b hover:bg-muted/30 transition-all duration-200">
+                        <td className="text-foreground py-3">{trade.date}</td>
+                        <td className="text-foreground py-3">{trade.ticker}</td>
                         <td className="py-3">
                           <span className={`px-2 py-1 rounded-lg text-xs font-medium ${trade.action === '买入' || trade.action === 'Buy' ? 'bg-green-500/20 text-green-400' : trade.action === '卖出' || trade.action === 'Sell' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
                             {getActionText(trade.action)}
                           </span>
                         </td>
-                        <td className="text-right text-analysis-text py-3">{trade.quantity}</td>
-                        <td className="text-right text-analysis-text py-3">¥{trade.price}</td>
-                        <td className="text-right text-analysis-text py-3">{trade.shares}</td>
-                        <td className="text-right text-analysis-text py-3">¥{trade.positionValue.toLocaleString()}</td>
+                        <td className="text-right text-foreground py-3">{trade.quantity}</td>
+                        <td className="text-right text-foreground py-3">¥{trade.price}</td>
+                        <td className="text-right text-foreground py-3">{trade.shares}</td>
+                        <td className="text-right text-foreground py-3">¥{trade.positionValue.toLocaleString()}</td>
                         <td className="text-right text-green-400 py-3">{trade.bullish}%</td>
                         <td className="text-right text-red-400 py-3">{trade.bearish}%</td>
                         <td className="text-right text-yellow-400 py-3">{trade.neutral}%</td>

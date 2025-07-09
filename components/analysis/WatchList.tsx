@@ -29,13 +29,13 @@ export const WatchList = ({ watchList, setWatchList }: WatchListProps) => {
   const StockItem = ({ code }: { code: string }) => {
     const stock = stockData[code];
     return (
-      <div className="flex items-center justify-between p-3 bg-analysis-card-secondary rounded-xl hover:bg-analysis-card-hover transition-all duration-300 shadow-sm hover:shadow-md">
+      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl hover:bg-muted/50 transition-all duration-300 shadow-sm hover:shadow-md">
         <div>
-          <div className="text-analysis-text font-medium">{code}</div>
-          <div className="text-analysis-text-muted text-sm">{stock?.name}</div>
+          <div className="text-foreground font-medium">{code}</div>
+          <div className="text-muted-foreground text-sm">{stock?.name}</div>
         </div>
         <div className="text-right">
-          <div className="text-analysis-text">¥{stock?.price}</div>
+          <div className="text-foreground">¥{stock?.price}</div>
           <div className={`text-sm ${
             stock?.change.startsWith('+') ? 'text-green-400' : 'text-red-400'
           }`}>
@@ -55,16 +55,16 @@ export const WatchList = ({ watchList, setWatchList }: WatchListProps) => {
   };
 
   return (
-    <Card className="bg-analysis-card border border-analysis-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+    <Card className="bg-card border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
       <CardHeader>
-        <CardTitle className="text-analysis-text flex items-center space-x-2">
+        <CardTitle className="text-foreground flex items-center space-x-2">
           <Star className="h-5 w-5 text-amber-400" />
           <span>关注列表</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
         {watchList.length === 0 ? (
-          <p className="text-analysis-text-muted text-center py-4">暂无关注股票</p>
+          <p className="text-muted-foreground text-center py-4">暂无关注股票</p>
         ) : (
           <div className="space-y-3">
             {displayedWatchList.map((code) => (
@@ -76,15 +76,15 @@ export const WatchList = ({ watchList, setWatchList }: WatchListProps) => {
                 <DialogTrigger asChild>
                   <Button 
                     variant="ghost" 
-                    className="w-full text-amber-400 hover:text-amber-300 hover:bg-analysis-card-hover mt-4 rounded-xl transition-all duration-200"
+                    className="w-full text-amber-400 hover:text-amber-300 hover:bg-muted/50 mt-4 rounded-xl transition-all duration-200"
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     查看更多 ({watchList.length - 5}条)
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-analysis-card border-analysis-border text-analysis-text max-w-2xl max-h-[80vh] overflow-hidden rounded-xl">
+                <DialogContent className="bg-card border text-foreground max-w-2xl max-h-[80vh] overflow-hidden rounded-xl">
                   <DialogHeader>
-                    <DialogTitle className="text-analysis-text flex items-center space-x-2">
+                    <DialogTitle className="text-foreground flex items-center space-x-2">
                       <Star className="h-5 w-5 text-amber-400" />
                       <span>关注列表 (全部 {watchList.length} 条)</span>
                     </DialogTitle>

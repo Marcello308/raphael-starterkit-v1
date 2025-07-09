@@ -3,6 +3,8 @@ import { ThemeProvider } from "next-themes";
 import { createClient } from "@/utils/supabase/server";
 import { Toaster } from "@/components/ui/toaster";
 import { ConditionalLayout } from "@/components/conditional-layout";
+import { StagewiseToolbar } from "@stagewise/toolbar-next";
+import ReactPlugin from "@stagewise-plugins/react";
 import "./globals.css";
 
 const baseUrl = process.env.BASE_URL
@@ -43,6 +45,11 @@ export default async function RootLayout({
             {children}
           </ConditionalLayout>
           <Toaster />
+          <StagewiseToolbar 
+            config={{
+              plugins: [ReactPlugin]
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>
