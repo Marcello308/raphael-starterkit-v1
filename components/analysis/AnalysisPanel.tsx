@@ -432,125 +432,61 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
-    // 🚀 模拟数据开关 - 设置为 false 使用真实API
-    const USE_MOCK_DATA = true;
-    
-    if (USE_MOCK_DATA) {
-      console.log('使用模拟数据进行调试');
-      
-      // 模拟进度更新
-      const mockProgress = [
-        { agent: "Warren Buffett", status: "分析基本面数据", timestamp: new Date().toISOString() },
-        { agent: "Peter Lynch", status: "评估成长潜力", timestamp: new Date().toISOString() },
-        { agent: "Technical Analyst", status: "分析技术指标", timestamp: new Date().toISOString() },
-        { agent: "Fundamentals Analyst", status: "计算估值模型", timestamp: new Date().toISOString() }
-      ];
-      
-      // 模拟进度步骤
-      for (let i = 0; i < mockProgress.length; i++) {
-        const step = mockProgress[i];
-        setAnalysisProgress(`${step.agent} - ${step.status}`);
-        setProgressSteps(prev => [...prev, step]);
-        await new Promise(resolve => setTimeout(resolve, 800));
-      }
-      
-      setAnalysisProgress("分析完成，正在跳转...");
-      
-      // 跳转到详情页
-      setTimeout(() => {
-        setIsAnalyzing(false);
-        setShowAnalysisDialog(false);
-        setAnalysisProgress("");
-        setProgressSteps([]);
-        router.push("/analysis-details");
-      }, 1000);
-      
-      return; // 使用模拟数据时直接返回，不执行真实API调用
-    }
-
     try {
-      // 解析股票代码 - 支持直接输入或选择格式
+      // 🚀 使用 data001.json 作为模拟数据进行调试
+      const USE_MOCK_DATA = true;
+      
+      // 解析股票代码
       let stockCode = selectedStock.trim();
-
-      // 如果是 "代码 - 名称" 格式，提取代码部分
       if (stockCode.includes(' - ')) {
         stockCode = stockCode.split(' - ')[0].trim();
       }
-
-      // 验证股票代码不为空
-      if (!stockCode) {
-        throw new Error('请输入有效的股票代码');
-      }
-
-      console.log('股票代码解析:', {
-        原始输入: selectedStock,
-        解析后代码: stockCode,
-        将发送的tickers: [stockCode]
-      });
-
-      // 获取选中模型的信息
-      const selectedModel = languageModels.find(m => m.model_name === selectedLanguageModel);
-      if (!selectedModel) {
-        throw new Error('未找到选中的语言模型');
-      }
-
-      // 构建agent_models - 根据选中的分析师生成
-      const agentModels = selectedAgents.map((agentId) => {
-        // 查找选中的分析师信息
-        const agent = allAgents.find(a => a.key === agentId);
-
-        return {
-          agent_id: agentId, // 使用实际的agent key作为ID
-          model_name: selectedModel.model_name,
-          model_provider: selectedModel.provider
-        };
-      });
-
-      // 构建请求数据
-      const request: AnalysisRequest = {
-        tickers: [stockCode], // 获取用户输入的股票代码
-        selected_agents: selectedAgents,
-        agent_models: agentModels,
-        start_date: "2025-06-01", // 固定开始日期
-        end_date: "2025-06-05",   // 固定结束日期
-        model_name: selectedModel.model_name,
-        model_provider: selectedModel.provider,
-        initial_cash: 100000,
-        margin_requirement: 0
-      };
-
-      // 调试输出
-      console.log('发送分析请求:', {
-        用户输入: selectedStock,
-        解析股票代码: stockCode,
-        tickers参数: [stockCode],
-        选中分析师: selectedAgents,
-        选中模型: selectedModel.display_name,
-        agent_models: agentModels,
-        完整请求: request
-      });
-
-      // 调用API，并传入 signal
-      const result = await runStockAnalysis(request, (progress: ProgressResponse) => {
-        // 处理进度更新
-        console.log('分析进度:', progress);
-        const progressText = `${progress.agent} - ${progress.status}`;
-        setAnalysisProgress(progressText);
-
-        // 添加到进度步骤列表
-        setProgressSteps(prev => {
-          const newSteps = [...prev, progress];
-          // 自动滚动到最新内容
-          setTimeout(() => {
-            if (progressListRef.current) {
-              progressListRef.current.scrollTop = progressListRef.current.scrollHeight;
-            }
-          }, 100);
-          return newSteps;
+      
+      let result: any;
+      
+      if (USE_MOCK_DATA) {
+        console.log('使用 data001.json 模拟数据进行调试');
+        
+        // 模拟选中分析师的进度更新
+        const selectedAgentNames = selectedAgents.map(agentId => {
+          const agent = allAgents.find(a => a.key === agentId);
+          return agent?.display_name || agentId;
         });
-      }, signal);
-
-      // 调试API响应数据
+        
+        // 模拟进度更新
+        const mockProgress: ProgressResponse[] = selectedAgentNames.map((agentName) => ({
+          type: "progress",
+          agent: agentName,
+          ticker: stockCode,
+          status: `正在分析 ${stockCode}`,
+          timestamp: new Date().toISOString(),
+          analysis: null
+        }));
+        
+        // 模拟进度步骤
+        for (let i = 0; i < mockProgress.length; i++) {
+          const step = mockProgress[i];
+          setAnalysisProgress(`${step.agent} - ${step.status}`);
+          setProgressSteps(prev => [...prev, step]);
+          await new Promise(resolve => setTimeout(resolve, 800));
+        }
+        
+        setAnalysisProgress("正在加载分析结果...");
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 读取 data001.json 数据
+        const response = await fetch('/data001.json');
+        const mockApiResponse = await response.json();
+        
+        console.log('从 data001.json 加载的数据:', mockApiResponse);
+        result = mockApiResponse;
+      } else {
+        // 真实API调用的代码（暂时留空）
+        console.log('使用真实API（暂未实现）');
+        return;
+      }
+      
+      // 处理API响应数据（无论是模拟还是真实）
       console.log('API完整响应:', result);
       console.log('API返回的原始analyst_signals:', result.data.analyst_signals);
 
@@ -594,25 +530,24 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
           display_name: selectedAgent?.display_name,
           possibleKeys: possibleKeys,
           usedKey: usedKey,
-          foundSignal: !!agentSignal, // 是否找到了信号
-          retrievedSignal: agentSignal, // 找到的信号数据
-          allAvailableKeys: Object.keys(result.data.analyst_signals), // 显示所有可用的键
-          rawAgentData: selectedAgent // 原始分析师数据
+          foundSignal: !!agentSignal,
+          retrievedSignal: agentSignal,
+          allAvailableKeys: Object.keys(result.data.analyst_signals),
+          rawAgentData: selectedAgent
         });
 
         if (!agentSignal) {
-          // 如果没有找到特定代理的信号，使用默认值
           console.warn(`未找到分析师 ${agentId} 的信号数据，使用默认值。`);
           console.warn(`尝试过的键格式: ${possibleKeys.join(', ')}`);
           console.warn(`API实际返回的键: ${Object.keys(result.data.analyst_signals).join(', ')}`);
-          // 调整 avatar 逻辑，确保专业分析师有正确的头像（即使是key的fallback）
+          
           const agentAvatar = selectedAgent && 'avatar' in selectedAgent ? selectedAgent.avatar : (
-            selectedAgent && 'icon' in selectedAgent ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>${selectedAgent.display_name}</title><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>` : undefined // 简易SVG图标作为fallback
+            selectedAgent && 'icon' in selectedAgent ? `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>${selectedAgent.display_name}</title><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>` : undefined
           );
 
           return {
             agent: selectedAgent?.display_name || agentId,
-            agentAvatar: agentAvatar || undefined, // 确保此处为 undefined 或有效图片路径
+            agentAvatar: agentAvatar || undefined,
             analysisType: "综合分析",
             signal: "持有",
             confidence: 50,
@@ -643,7 +578,6 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       console.log('转换后的分析结果:', analysisResults);
 
       // 构建投资组合策略
-      // 添加空值检查防止 "Cannot read properties of null" 错误
       console.log('API返回的decisions数据:', result.data.decisions);
       console.log('API响应的完整data结构:', Object.keys(result.data || {}));
 
@@ -651,7 +585,6 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
 
       if (!result.data.decisions || Object.keys(result.data.decisions).length === 0) {
         console.warn('API响应中缺少decisions数据，使用默认投资策略');
-        // 如果没有decisions数据，创建一个默认的投资策略
         portfolioStrategy = {
           action: 'HOLD',
           actionColor: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-black',
@@ -696,13 +629,13 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
 
       // 调试输出
       console.log('准备跳转到详情页面:', {
-        analysisResults, // 确认分析结果是否完整
-        portfolioStrategy, // 确认投资策略是否完整
+        analysisResults,
+        portfolioStrategy,
         selectedStock,
-        analysisResultsLength: analysisResults?.length, // 确认数组长度
-        portfolioStrategyKeys: Object.keys(portfolioStrategy || {}), // 确认对象是否有键
-        isAnalysisResultsArray: Array.isArray(analysisResults), // 确认是否是数组
-        isPortfolioStrategyObject: typeof portfolioStrategy === 'object' && portfolioStrategy !== null // 确认是否是对象
+        analysisResultsLength: analysisResults?.length,
+        portfolioStrategyKeys: Object.keys(portfolioStrategy || {}),
+        isAnalysisResultsArray: Array.isArray(analysisResults),
+        isPortfolioStrategyObject: typeof portfolioStrategy === 'object' && portfolioStrategy !== null
       });
 
       // 延迟一下让用户看到完成状态，然后关闭弹窗并跳转
@@ -711,9 +644,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
         setShowAnalysisDialog(false);
         setAnalysisProgress("");
         setProgressSteps([]);
-
-        // 导航到分析详情页面
-        router.push("/analysis-details"); // 替换 navigate，并移除 state 参数，Next.js 不直接支持
+        router.push("/analysis/details");
       }, 1000);
 
     } catch (error) {
@@ -726,7 +657,7 @@ export const AnalysisPanel = ({ watchList, setWatchList }: AnalysisPanelProps) =
       // 如果是用户主动中断，不显示错误提示
       if (error instanceof DOMException && error.name === 'AbortError') {
         console.log('分析被用户中断。');
-        return; // 不显示toast
+        return;
       }
 
       // 使用toast显示错误信息

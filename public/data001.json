@@ -1,0 +1,120 @@
+{
+    "type": "complete",
+    "data": {
+        "decisions": {
+            "NVDA": {
+                "action": "short",
+                "quantity": 42,
+                "confidence": 51.46,
+                "reasoning": "The signal is bearish, but confidence is low (51.46). A conservative short position is initiated to reflect this uncertainty. The current margin requirement is 0, allowing for this position without impacting available margin."
+            },
+            "MSFT": {
+                "action": "buy",
+                "quantity": 42,
+                "confidence": 72.46,
+                "reasoning": "Strong bullish signal (confidence: 72.46) with no current position. The cost of the maximum allowed shares (42 * 467.68 = $19,642.56) is well within the available portfolio cash, so a full position is taken."
+            }
+        },
+        "analyst_signals": {
+            "sentiment_agent": {
+                "NVDA": {
+                    "signal": "bearish",
+                    "confidence": 51.46,
+                    "reasoning": {
+                        "insider_trading": {
+                            "signal": "bearish",
+                            "confidence": 62,
+                            "metrics": {
+                                "total_trades": 1000,
+                                "bullish_trades": 384,
+                                "bearish_trades": 616,
+                                "weight": 0.3,
+                                "weighted_bullish": 115.2,
+                                "weighted_bearish": 184.8
+                            }
+                        },
+                        "news_sentiment": {
+                            "signal": "bullish",
+                            "confidence": 68,
+                            "metrics": {
+                                "total_articles": 100,
+                                "bullish_articles": 68,
+                                "bearish_articles": 8,
+                                "neutral_articles": 24,
+                                "weight": 0.7,
+                                "weighted_bullish": 47.6,
+                                "weighted_bearish": 5.6
+                            }
+                        },
+                        "combined_analysis": {
+                            "total_weighted_bullish": 162.8,
+                            "total_weighted_bearish": 190.4,
+                            "signal_determination": "Bearish based on weighted signal comparison"
+                        }
+                    }
+                },
+                "MSFT": {
+                    "signal": "bullish",
+                    "confidence": 72.46,
+                    "reasoning": {
+                        "insider_trading": {
+                            "signal": "bullish",
+                            "confidence": 74,
+                            "metrics": {
+                                "total_trades": 1000,
+                                "bullish_trades": 735,
+                                "bearish_trades": 265,
+                                "weight": 0.3,
+                                "weighted_bullish": 220.5,
+                                "weighted_bearish": 79.5
+                            }
+                        },
+                        "news_sentiment": {
+                            "signal": "bullish",
+                            "confidence": 68,
+                            "metrics": {
+                                "total_articles": 100,
+                                "bullish_articles": 68,
+                                "bearish_articles": 1,
+                                "neutral_articles": 31,
+                                "weight": 0.7,
+                                "weighted_bullish": 47.6,
+                                "weighted_bearish": 0.7
+                            }
+                        },
+                        "combined_analysis": {
+                            "total_weighted_bullish": 268.1,
+                            "total_weighted_bearish": 80.2,
+                            "signal_determination": "Bullish based on weighted signal comparison"
+                        }
+                    }
+                }
+            },
+            "risk_management_agent": {
+                "NVDA": {
+                    "remaining_position_limit": 20000.0,
+                    "current_price": 139.99,
+                    "reasoning": {
+                        "portfolio_value": 100000.0,
+                        "current_position_value": 0.0,
+                        "position_limit": 20000.0,
+                        "remaining_limit": 20000.0,
+                        "available_cash": 100000.0
+                    }
+                },
+                "MSFT": {
+                    "remaining_position_limit": 20000.0,
+                    "current_price": 467.68,
+                    "reasoning": {
+                        "portfolio_value": 100000.0,
+                        "current_position_value": 0.0,
+                        "position_limit": 20000.0,
+                        "remaining_limit": 20000.0,
+                        "available_cash": 100000.0
+                    }
+                }
+            }
+        }
+    },
+    "timestamp": null
+}

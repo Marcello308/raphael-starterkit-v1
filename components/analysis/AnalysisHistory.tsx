@@ -123,7 +123,7 @@ export const AnalysisHistory = () => {
   const handleHistoryClick = (item: AnalysisHistoryItem) => {
     // Next.js router doesn't support passing state directly like react-router.
     // You might need to use query parameters or a global state management solution.
-    router.push("/analysis-details");
+    router.push("/analysis/details");
   };
 
   const getActionColor = (action: string) => {
